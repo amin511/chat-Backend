@@ -8,6 +8,10 @@ const app = express()
 const http = require('http');
 const socketIO = require('socket.io');
 const server = http.createServer(app);
+const path = require("path")
+
+app.use(express.static(path.resolve(__dirname, './dist')));
+
 app.get("/", (req, res) => res.send("chat app"));
 app.use(cors());
 
