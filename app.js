@@ -76,7 +76,7 @@ start();
 
 const io = socketIO(server, {
     cors: {
-        origins: 'https://chat-website-frontend-pwt9.vercel.app', // Replace with your React app's URL
+        origins: 'https://chat-website-frontend-ndsfhrywc-amin511.vercel.app', // Replace with your React app's URL
         methods: ['GET', 'POST'],
     },
 });
