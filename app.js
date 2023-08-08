@@ -10,7 +10,7 @@ const socketIO = require('socket.io');
 const server = http.createServer(app);
 const path = require("path")
 
-app.use(express.static(path.resolve(__dirname, './dist')));
+// app.use(express.static(path.resolve(__dirname, './dist')));
 
 app.get("/", (req, res) => res.send("chat app"));
 app.use(cors());
@@ -43,6 +43,9 @@ app.use(xss());
 //** 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/jobs", authenticateUser, jobsRouter);
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'dist', 'index.html')); // Replace with your file path
+});
 
 const messagesRouter = require('./routes/messages')
 app.use("/api/v1/messages", authenticateUser, messagesRouter);
