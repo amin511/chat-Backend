@@ -75,7 +75,7 @@ start();
 
 const io = socketIO(server, {
     cors: {
-        origin: 'http://localhost:5173', // Replace with your React app's URL
+        origins: '*:*', // Replace with your React app's URL
         methods: ['GET', 'POST'],
     },
 });
