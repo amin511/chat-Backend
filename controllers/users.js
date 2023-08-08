@@ -17,7 +17,7 @@ const getUserById = async (req, res) => {
         throw new BadRequestError("provide userId");
     }
 
-    const user = await User.findOne({ _id: userId }).select("-password");
+    const user = await User.findOne({ _id: userId }).select("-userImage");
     res.status(200).json(user);
 }
 
