@@ -10,8 +10,6 @@ const socketIO = require('socket.io');
 const server = http.createServer(app);
 const path = require("path")
 
-// app.use(express.static(path.resolve(__dirname, './dist')));
-
 app.get("/", (req, res) => res.send("chat app"));
 app.use(cors());
 
@@ -43,9 +41,9 @@ app.use(xss());
 //** 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/jobs", authenticateUser, jobsRouter);
-app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'dist', 'index.html')); // Replace with your file path
-});
+// app.get('*', (req, res) => {
+//     res.sendFile(path.resolve(__dirname, 'dist', 'index.html')); // Replace with your file path
+// });
 
 const messagesRouter = require('./routes/messages')
 app.use("/api/v1/messages", authenticateUser, messagesRouter);
@@ -78,7 +76,7 @@ start();
 
 const io = socketIO(server, {
     cors: {
-        origins: 'https://chat-website-xxiq.onrender.com', // Replace with your React app's URL
+        origins: 'https://chat-website-frontend-pwt9.vercel.app', // Replace with your React app's URL
         methods: ['GET', 'POST'],
     },
 });
