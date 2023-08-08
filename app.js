@@ -75,7 +75,7 @@ start();
 
 const io = socketIO(server, {
     cors: {
-        origins: '*:*', // Replace with your React app's URL
+        origins: 'https://chat-website-xxiq.onrender.com', // Replace with your React app's URL
         methods: ['GET', 'POST'],
     },
 });
