@@ -8,10 +8,8 @@ const app = express()
 const http = require('http');
 const socketIO = require('socket.io');
 const server = http.createServer(app);
-const path = require("path")
-
-app.get("/", (req, res) => res.send("chat app"));
-
+const multer = require('multer');
+path = require("path");
 app.use(cors());
 
 
@@ -37,14 +35,13 @@ app.use(express.urlencoded({ limit: '50mb' }));
 app.use(cors())
 app.use(helmet());
 app.use(xss());
+app.use(express.static('upload'))
+
 
 //routes
 //** 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/jobs", authenticateUser, jobsRouter);
-// app.get('*', (req, res) => {
-//     res.sendFile(path.resolve(__dirname, 'dist', 'index.html')); // Replace with your file path
-// });
 
 const messagesRouter = require('./routes/messages')
 app.use("/api/v1/messages", authenticateUser, messagesRouter);
@@ -67,23 +64,36 @@ const start = async () => {
 }
 start();
 
+
+
 // backend.js
 
 
-
-
-
-
+let usersOnline = [];
 
 const io = socketIO(server, {
     cors: {
-        origins: 'https://chat-website-frontend-pwt9-qt5b3thdi-amin511.vercel.app', // Replace with your React app's URL
+        origin: '', // Replace with your React app's URL
         methods: ['GET', 'POST'],
     },
 });
 
 io.on('connection', (socket) => {
 
+    // track connection and users online ;
+    socket.on("online", (userId) => {
+        console.log("isOnline", userId)
+        const isFound = usersOnline.filter((user) => (user.userId === userId) && (user.socketId) === (socket.id))
+        if (isFound.length === 0) {
+            usersOnline.push({ socketId: socket.id, userId: userId });
+            io.emit("usersOnline", usersOnline);
+            console.log(usersOnline);
+        }
+    })
+
+
+
+    // room chat
     socket.on('joinRoom', (roomName) => {
         socket.join(roomName); // Join the specific room
         console.count('User joined room:', roomName);
@@ -94,17 +104,32 @@ io.on('connection', (socket) => {
         console.log('User left room:', roomName);
     });
 
-    socket.on('message', (data) => {
+    socket.on('addMessage', (data) => {
+        console.log(data)
         const { roomName, payload } = data; // Extract roomName and message from data
-        console.log('Received message:', payload);
-
-        io.to(roomName).emit('messageRecived', payload);
+        console.log('Received message:', payload, "roomName", roomName);
+        io.to(roomName).emit('messageReceived', payload);
     });
-
-    socket.on('disconnect', () => {
+    //////
+    /// disconnected 
+    socket.on('disconnect', async () => {
+        usersOnline = usersOnline.filter(user => user.socketId != socket.id);
+        io.emit("usersOnline", usersOnline);
         console.count('A client disconnected');
+        console.log(usersOnline);
     });
+
 });
+
+
+
+
+
+
+
+
+
+
 
 // const port = 3005;
 // server.listen(port, () => {

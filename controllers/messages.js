@@ -1,41 +1,25 @@
-const { StatusCodes } = require("http-status-codes");
 const { BadRequestError } = require("../errors");
-const Message = require("../models/messages")
+const User = require("../models/User")
 
-const getAllmessages = async (req, res) => {
+
+const getAllUsers = async (req, res) => {
+    User.createIndexes({ _id: 1 })
     const { userID } = req.user
-    const { userIdRoom } = req.body;
-
-    if (!userIdRoom) {
-        throw new BadRequestError("please provide the usersId")
-    }
-    const messages = await Message.find({
-        $or: [{ senderId: userID, reciverId: userIdRoom }, { senderId: userIdRoom, reciverId: userID }]
-    }
-    ).sort("createdAt");
-    res.status(StatusCodes.OK).json({ messages })
+    const Users = await User.find({ _id: { $not: { $eq: userID } } }).select("-password");
+    // const Users = await User.deleteMany({})
+    res.status(200).json(Users);
 }
 
-const sendMessage = async (req, res) => {
-    const { userID } = req.user
-    const { userIdRoom, content } = req.body;
-
-    if (!userIdRoom) {
-        throw new BadRequestError("please provide the usersId")
+const getUserById = async (req, res) => {
+    const { id: userId } = req.params;
+    console.log("find by id");
+    if (!userId) {
+        throw new BadRequestError("provide userId");
     }
-    const message = await Message.create({
-        senderId: userID,
-        reciverId: userIdRoom,
-        content: content
-    })
 
-    res.status(StatusCodes.CREATED).json({
-        sucsess: true,
-        message
-    })
+    const user = await User.findOne({ _id: userId }).select("-password");
+    res.status(200).json(user);
 }
 
 
-module.exports = { getAllmessages, sendMessage }
-
-// first user 
+module.exports = { getAllUsers, getUserById }

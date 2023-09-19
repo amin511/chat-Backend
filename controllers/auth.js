@@ -4,16 +4,20 @@ const bcrypt = require('bcryptjs');
 const User = require("../models/User")
 const jwt = require("jsonwebtoken");
 const { StatusCodes } = require("http-status-codes");
+const path = require("path")
+const fs = require("fs")
+
 const register = async (req, res) => {
 
     const { email, name, password } = req.body
+    console.log(req.file, "req.file")
 
-    console.log(req.body)
+
     if (!email || !name || !password) {
         throw new BadRequestError("Please provide email password name")
     }
 
-    const newUser = await User.create({ ...req.body })
+    const newUser = await User.create({ ...req.body, userImage: req.file.filename })
     const token = newUser.createJWT()
 
     res.status(StatusCodes.CREATED).json({
@@ -54,3 +58,7 @@ const login = async (req, res) => {
 }
 
 module.exports = { register, login }
+
+
+
+
