@@ -5,7 +5,7 @@ const User = require("../models/User")
 const getAllUsers = async (req, res) => {
     User.createIndexes({ _id: 1 })
     const { userID } = req.user
-    const Users = await User.find({ _id: { $not: { $eq: userID } } }).select("-userImage");
+    const Users = await User.find({ _id: { $not: { $eq: userID } } }).select("-password");
     // const Users = await User.deleteMany({})
     res.status(200).json(Users);
 }
