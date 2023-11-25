@@ -6,18 +6,34 @@ const jwt = require("jsonwebtoken");
 const { StatusCodes } = require("http-status-codes");
 const path = require("path")
 const fs = require("fs")
+const cloudinary = require('cloudinary').v2;
+
+
+cloudinary.config({
+    cloud_name: 'dh8hvr4i9',
+    api_key: '314417351436837',
+    api_secret: 'PlinDJvd0juqrOwXC9dgkvt-CPc',
+    secure: true,
+});
+
+
+
+
+
 
 const register = async (req, res) => {
 
+
+    console.log(req.file);
+    const b64 = Buffer.from(req.file.buffer).toString("base64");
+    let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
     const { email, name, password } = req.body
-    console.log(req.file, "req.file")
-
-
     if (!email || !name || !password) {
         throw new BadRequestError("Please provide email password name")
     }
 
-    const newUser = await User.create({ ...req.body, userImage: req.file.filename })
+    const result = await cloudinary.uploader.upload(dataURI)
+    const newUser = await User.create({ ...req.body, userImage: result.url })
     const token = newUser.createJWT()
 
     res.status(StatusCodes.CREATED).json({
@@ -47,7 +63,6 @@ const login = async (req, res) => {
     }
     const token = user.createJWT();
     res.status(StatusCodes.OK).json({
-
         user: {
             token,
             name: user.name,

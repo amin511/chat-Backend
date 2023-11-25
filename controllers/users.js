@@ -21,5 +21,4 @@ const getUserById = async (req, res) => {
     res.status(200).json(user);
 }
 
-
 module.exports = { getAllUsers, getUserById }

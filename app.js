@@ -41,6 +41,11 @@ app.use(express.static('upload'))
 //routes
 //** 
 app.use("/api/v1/auth", authRouter);
+app.post('/api/v1/logout ', authenticateUser, (req, res) => {
+    const [userId, name] = req.user;
+    console.log(userId, name);
+})
+
 app.use("/api/v1/jobs", authenticateUser, jobsRouter);
 
 const messagesRouter = require('./routes/messages')
@@ -73,7 +78,7 @@ let usersOnline = [];
 
 const io = socketIO(server, {
     cors: {
-        origin: '', // Replace with your React app's URL
+        origin: 'https://chat-amin.netlify.app', // Replace with your React app's URL
         methods: ['GET', 'POST'],
     },
 });
@@ -118,7 +123,6 @@ io.on('connection', (socket) => {
         console.count('A client disconnected');
         console.log(usersOnline);
     });
-
 });
 
 
@@ -126,12 +130,3 @@ io.on('connection', (socket) => {
 
 
 
-
-
-
-
-
-// const port = 3005;
-// server.listen(port, () => {
-//     console.log(`Server is running on http://localhost:${port}`);
-// });
