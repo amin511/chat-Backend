@@ -85,7 +85,7 @@ let usersOnline = [];
 
 const io = socketIO(server, {
     cors: {
-        origin: 'http://localhost:5173', // Replace with your React app's URL
+        origin: 'https://chat-amin.netlify.app', // Replace with your React app's URL
         methods: ['GET', 'POST'],
     },
 });
