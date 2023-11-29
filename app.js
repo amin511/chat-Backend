@@ -11,6 +11,10 @@ const server = http.createServer(app);
 const multer = require('multer');
 path = require("path");
 app.use(cors());
+const bodyParser = require('body-parser');
+
+// Use body-parser middleware
+
 
 
 // const path = require("path")
@@ -35,6 +39,7 @@ app.use(express.urlencoded());
 app.use(cors())
 app.use(helmet());
 app.use(xss());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('upload'))
 
 
